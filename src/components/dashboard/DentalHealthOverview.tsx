@@ -57,7 +57,7 @@ async function DentalHealthOverview() {
                     Try AI Assistant
                   </Button>
                 </Link>
-                <Link href="/dashboard/appointments">
+                <Link href="/appointments">
                   <Button size="sm" variant="outline">
                     Book Appointment
                   </Button>
