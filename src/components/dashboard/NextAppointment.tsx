@@ -40,7 +40,7 @@ function NextAppointment() {
 
   // filter for upcoming appointments (today or future) - include pending and confirmed
   const upcomingAppointments =
-    appointments?.filter((appointment) => {
+    appointments?.filter((appointment: any) => {
       const appointmentDate = parseISO(appointment.date);
       const today = new Date();
       const isUpcoming = isSameDay(appointmentDate, today) || isAfter(appointmentDate, today);
