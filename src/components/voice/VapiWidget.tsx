@@ -11,12 +11,12 @@ function VapiWidget() {
   const [callActive, setCallActive] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Array<{content: string; role: string}>>([]);
   const [callEnded, setCallEnded] = useState(false);
 
   const authState: any = useAppSelector((state: any) => state.auth);
   const { user, isAuthenticated } = authState || {};
-  const messageContainerRef = useRef(null);
+  const messageContainerRef = useRef<HTMLDivElement>(null);
 
   // auto-scroll for messages
   useEffect(() => {
@@ -52,14 +52,14 @@ function VapiWidget() {
       setIsSpeaking(false);
     };
 
-    const handleMessage = (message) => {
+    const handleMessage = (message: any) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
         const newMessage = { content: message.transcript, role: message.role };
         setMessages((prev) => [...prev, newMessage]);
       }
     };
 
-    const handleError = (error) => {
+    const handleError = (error: any) => {
       console.log("Vapi Error", error);
       setConnecting(false);
       setCallActive(false);
