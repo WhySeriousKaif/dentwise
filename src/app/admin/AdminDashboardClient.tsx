@@ -8,7 +8,7 @@ import { useAppSelector } from "@/store/hooks";
 import { SettingsIcon } from "lucide-react";
 
 function AdminDashboardClient() {
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state: any) => state.auth);
   // const { data: doctors = [], isLoading: doctorsLoading } = useGetDoctors();
   const { data: appointments = [], isLoading: appointmentsLoading } = useGetAppointments();
 
