@@ -11,13 +11,15 @@ import ThemeToggle from "./ThemeToggle";
 
 function Navbar() {
   const dispatch = useAppDispatch();
-  const { user, isAuthenticated, loading, initialized } = useAppSelector((state) => state.auth);
+  const auth: any = useAppSelector((state: any) => state.auth);
+  const { user, isAuthenticated, loading, initialized } = auth || {};
   const pathname = usePathname();
   const router = useRouter();
 
   const handleSignOut = async () => {
     try {
-      await dispatch(signOut());
+      // dispatch type is unknown in JS build context; suppress by casting
+      await (dispatch as any)(signOut());
       router.push('/signin');
     } catch (error) {
       console.error('Sign out error:', error);
