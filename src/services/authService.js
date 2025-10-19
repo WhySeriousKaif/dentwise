@@ -37,6 +37,10 @@ export const authService = {
       const response = await api.get('/api/user');
       return response.data;
     } catch (error) {
+      // If it's a 401 (unauthorized), this is normal when not logged in
+      if (error.response?.status === 401) {
+        throw new Error('NO_USER'); // Special error code for no user
+      }
       throw error.response?.data || { message: 'Failed to get user' };
     }
   },

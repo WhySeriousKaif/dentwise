@@ -5,6 +5,7 @@ import Hero from "@/components/landing/Hero";
 import HowItWorks from "@/components/landing/HowItWorks";
 import PricingSection from "@/components/landing/PricingSection";
 import WhatToAsk from "@/components/landing/WhatToAsk";
+import FloatingChatButton from "@/components/chat/FloatingChatButton";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       </div>
       <CTA />
       <Footer />
+      <FloatingChatButton />
     </div>
   );
 }

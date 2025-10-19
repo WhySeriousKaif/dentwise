@@ -74,3 +74,17 @@ export function useUpdateAppointmentStatus() {
     onError: (error) => console.error("Failed to update appointment:", error),
   });
 }
+
+export function useCancelAppointment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (appointmentId) => 
+      appointmentService.cancelAppointment(appointmentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getUserAppointments"] });
+      queryClient.invalidateQueries({ queryKey: ["getAppointments"] });
+    },
+    onError: (error) => console.error("Failed to cancel appointment:", error),
+  });
+}

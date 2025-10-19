@@ -45,6 +45,10 @@ export const getCurrentUser = createAsyncThunk(
       const response = await authService.getCurrentUser();
       return response;
     } catch (error) {
+      // If it's the special "NO_USER" error, don't treat it as an error
+      if (error.message === 'NO_USER') {
+        return rejectWithValue('NO_USER');
+      }
       return rejectWithValue(error.message || 'Failed to get user');
     }
   }
@@ -53,7 +57,7 @@ export const getCurrentUser = createAsyncThunk(
 const initialState = {
   user: null,
   isAuthenticated: false,
-  loading: true, // Start with loading true to prevent flash
+  loading: false, // Start with loading false
   error: null,
   initialized: false, // Track if we've checked auth status
 };
@@ -134,7 +138,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
-        state.error = action.payload;
+        // Only set error if it's not the "NO_USER" case (which is normal when not logged in)
+        state.error = action.payload === 'NO_USER' ? null : action.payload;
         state.initialized = true;
       });
   },

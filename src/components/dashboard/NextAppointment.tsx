@@ -1,28 +1,50 @@
 'use client';
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { getUserAppointments } from "@/features/appointments/appointmentSlice";
 import { format, isAfter, isSameDay, parseISO } from "date-fns";
 import NoNextAppointments from "./NoNextAppointments";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { CalendarIcon, ClockIcon, UserIcon } from "lucide-react";
+import { CalendarIcon, ClockIcon, UserIcon, EyeIcon } from "lucide-react";
+import { AppointmentDetailsModal } from "../appointments/AppointmentDetailsModal";
+import { useCancelAppointment } from "@/hooks/use-appointment";
+import { toast } from "sonner";
 
 function NextAppointment() {
   const dispatch = useAppDispatch();
   const { appointments, loading } = useAppSelector((state) => state.appointments);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const cancelAppointmentMutation = useCancelAppointment();
 
   useEffect(() => {
     dispatch(getUserAppointments());
   }, [dispatch]);
 
-  // filter for upcoming CONFIRMED appointments only (today or future)
+  const handleAppointmentClick = (appointment) => {
+    setSelectedAppointment(appointment);
+    setShowDetailsModal(true);
+  };
+
+  const handleDeleteAppointment = async (appointmentId) => {
+    try {
+      await cancelAppointmentMutation.mutateAsync(appointmentId);
+      toast.success('Appointment cancelled successfully');
+      setShowDetailsModal(false);
+    } catch (error) {
+      toast.error('Failed to cancel appointment');
+    }
+  };
+
+  // filter for upcoming appointments (today or future) - include pending and confirmed
   const upcomingAppointments =
     appointments?.filter((appointment) => {
       const appointmentDate = parseISO(appointment.date);
       const today = new Date();
       const isUpcoming = isSameDay(appointmentDate, today) || isAfter(appointmentDate, today);
-      return isUpcoming && appointment.status === "CONFIRMED";
+      const hasValidStatus = appointment.status === "confirmed" || appointment.status === "CONFIRMED" || appointment.status === "pending" || appointment.status === "PENDING";
+      return isUpcoming && hasValidStatus;
     }) || [];
 
   // get the next appointment (earliest upcoming one)
@@ -54,14 +76,19 @@ function NextAppointment() {
   const isToday = isSameDay(appointmentDate, new Date());
 
   return (
-    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-background">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <CalendarIcon className="size-5 text-primary" />
-          Next Appointment
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <>
+      <Card 
+        className="border-primary/20 bg-gradient-to-br from-primary/5 to-background cursor-pointer hover:shadow-md transition-shadow"
+        onClick={() => handleAppointmentClick(nextAppointment)}
+      >
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarIcon className="size-5 text-primary" />
+            Next Appointment
+            <EyeIcon className="size-4 text-muted-foreground ml-auto" />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
         {/* Status Badge */}
         <div className="flex items-center justify-between">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
@@ -82,7 +109,7 @@ function NextAppointment() {
               <UserIcon className="size-4 text-primary" />
             </div>
             <div>
-              <p className="font-medium text-sm">{nextAppointment.doctor?.name || 'Dr. Smith'}</p>
+              <p className="font-medium text-sm">{nextAppointment.doctorName || nextAppointment.doctor?.name || 'Dr. Smith'}</p>
               <p className="text-xs text-muted-foreground">{nextAppointment.reason || 'General Checkup'}</p>
             </div>
           </div>
@@ -117,8 +144,20 @@ function NextAppointment() {
             {upcomingAppointments.length > 2 ? "s" : ""}
           </p>
         )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Appointment Details Modal */}
+      {selectedAppointment && (
+        <AppointmentDetailsModal
+          open={showDetailsModal}
+          onOpenChange={setShowDetailsModal}
+          appointment={selectedAppointment}
+          onDelete={handleDeleteAppointment}
+          isDeleting={cancelAppointmentMutation.isPending}
+        />
+      )}
+    </>
   );
 }
 

@@ -42,6 +42,18 @@ export const appointmentService = {
     }
   },
 
+  // Cancel appointment (update status to cancelled)
+  cancelAppointment: async (appointmentId) => {
+    try {
+      const response = await api.put(`/api/appointments/${appointmentId}`, {
+        status: 'cancelled'
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to cancel appointment' };
+    }
+  },
+
   // Delete appointment
   deleteAppointment: async (appointmentId) => {
     try {

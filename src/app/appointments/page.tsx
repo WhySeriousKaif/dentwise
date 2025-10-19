@@ -1,13 +1,14 @@
 "use client";
 
 import { AppointmentConfirmationModal } from "@/components/appointments/AppointmentConfirmationModal";
+import { AppointmentDetailsModal } from "@/components/appointments/AppointmentDetailsModal";
 import BookingConfirmationStep from "@/components/appointments/BookingConfirmationStep";
 import DoctorSelectionStep from "@/components/appointments/DoctorSelectionStep";
 import ProgressSteps from "@/components/appointments/ProgressSteps";
 import TimeSelectionStep from "@/components/appointments/TimeSelectionStep";
 import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { useBookAppointment, useUserAppointments } from "@/hooks/use-appointment";
+import { useBookAppointment, useUserAppointments, useCancelAppointment } from "@/hooks/use-appointment";
 import { APPOINTMENT_TYPES } from "@/lib/utils";
 import { format } from "date-fns";
 import { useState } from "react";
@@ -41,8 +42,11 @@ function AppointmentsPage() {
   const [currentStep, setCurrentStep] = useState(1); // 1: select dentist, 2: select time, 3: confirm
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [bookedAppointment, setBookedAppointment] = useState<any>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const bookAppointmentMutation = useBookAppointment();
+  const cancelAppointmentMutation = useCancelAppointment();
   const { data: userAppointments = [] } = useUserAppointments();
 
   const handleSelectDentist = (dentistId: string) => {
@@ -52,6 +56,21 @@ function AppointmentsPage() {
     setSelectedDate("");
     setSelectedTime("");
     setSelectedType("");
+  };
+
+  const handleAppointmentClick = (appointment: any) => {
+    setSelectedAppointment(appointment);
+    setShowDetailsModal(true);
+  };
+
+  const handleDeleteAppointment = async (appointmentId: string) => {
+    try {
+      await cancelAppointmentMutation.mutateAsync(appointmentId);
+      toast.success('Appointment cancelled successfully');
+      setShowDetailsModal(false);
+    } catch (error) {
+      toast.error('Failed to cancel appointment');
+    }
   };
 
   const handleBookAppointment = async () => {
@@ -197,7 +216,11 @@ function AppointmentsPage() {
           <h2 className="text-xl font-semibold mb-4">Your Upcoming Appointments</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {userAppointments.map((appointment, index) => (
-              <div key={appointment._id || appointment.id || `appointment-${index}`} className="bg-card border rounded-lg p-4 shadow-sm">
+              <div 
+                key={appointment._id || appointment.id || `appointment-${index}`} 
+                className="bg-card border rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => handleAppointmentClick(appointment)}
+              >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="size-10 bg-primary/10 rounded-full flex items-center justify-center">
                     <img
@@ -216,12 +239,22 @@ function AppointmentsPage() {
                     📅 {safeFormatDate(appointment.date, "MMM d, yyyy")}
                   </p>
                   <p className="text-muted-foreground">🕐 {appointment.time}</p>
+                  <p className="text-xs text-muted-foreground mt-2">Click to view details</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
       )}
+
+      {/* Appointment Details Modal */}
+      <AppointmentDetailsModal
+        open={showDetailsModal}
+        onOpenChange={setShowDetailsModal}
+        appointment={selectedAppointment}
+        onDelete={handleDeleteAppointment}
+        isDeleting={cancelAppointmentMutation.isPending}
+      />
     </ProtectedRoute>
   );
 }

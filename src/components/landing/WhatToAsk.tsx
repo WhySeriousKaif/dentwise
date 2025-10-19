@@ -28,7 +28,7 @@ function WhatToAsk() {
 
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left Side - Interactive Chat Examples */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div className="space-y-6">
               <h3 className="text-2xl font-bold mb-8">Common questions our AI answers:</h3>
 
@@ -50,7 +50,7 @@ function WhatToAsk() {
                           Get immediate advice on pain management, possible causes, and when to see
                           a dentist urgently
                         </p>
-                        <div className="flex gap-2 mt-3">
+                        <div className="flex gap-1 mt-3">
                           <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
                             Instant Response
                           </span>
@@ -82,7 +82,7 @@ function WhatToAsk() {
                           Compare treatment options, pricing ranges, and find the best whitening
                           solution for your budget
                         </p>
-                        <div className="flex gap-2 mt-3">
+                        <div className="flex gap-1 mt-3">
                           <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
                             Cost Analysis
                           </span>
@@ -114,7 +114,7 @@ function WhatToAsk() {
                           Learn about filling lifespan, warning signs of wear, and replacement
                           timing guidance
                         </p>
-                        <div className="flex gap-2 mt-3">
+                        <div className="flex gap-1 mt-3">
                           <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
                             Preventive Care
                           </span>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { signIn, signUp } from "@/features/auth/authSlice";
+import { signIn, signUp, getCurrentUser, setInitialized } from "@/features/auth/authSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,23 +20,44 @@ export default function AuthForm({ mode = "signin" }) {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   const dispatch = useAppDispatch();
   const { error, isAuthenticated, loading, initialized } = useAppSelector((state) => state.auth);
   const router = useRouter();
 
+  // Set client flag after hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Check authentication status on mount
+  useEffect(() => {
+    if (isClient && !initialized) {
+      dispatch(setInitialized());
+      
+      // Also try to get current user in background
+      dispatch(getCurrentUser()).catch(() => {
+        // getCurrentUser failed, but form is already shown
+      });
+    }
+  }, [dispatch, initialized, isClient]);
+
   // Redirect to dashboard when authenticated
   useEffect(() => {
-    if (isAuthenticated && initialized) {
+    if (isClient && isAuthenticated && initialized) {
       router.push('/dashboard');
     }
-  }, [isAuthenticated, initialized, router]);
+  }, [isAuthenticated, initialized, router, isClient]);
 
-  // Show loading while checking auth status
-  if (!initialized || loading) {
+  // Show loading only while checking auth status initially (client-side only)
+  if (isClient && !initialized) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8 relative">
+        <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
+        <div className="relative z-10 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        </div>
       </div>
     );
   }
@@ -107,13 +128,15 @@ export default function AuthForm({ mode = "signin" }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Grid pattern background matching landing page */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
+      <Card className="w-full max-w-md relative z-10 border-2 border-border/50 bg-card/90 backdrop-blur-sm shadow-2xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center text-foreground">
             {mode === "signin" ? "Sign in to DentWise" : "Create your account"}
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-muted-foreground">
             {mode === "signin" 
               ? "Enter your email and password to access your account"
               : "Fill in your details to get started with DentWise"
@@ -187,7 +210,7 @@ export default function AuthForm({ mode = "signin" }) {
             </Button>
           </form>
 
-          <div className="mt-4 text-center text-sm">
+          <div className="mt-4 text-center text-sm text-muted-foreground">
             {mode === "signin" ? (
               <>
                 Don't have an account?{" "}

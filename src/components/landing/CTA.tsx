@@ -1,8 +1,21 @@
+"use client";
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { MicIcon, CalendarIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function CTA() {
+  const router = useRouter();
+
+  const handleVoiceClick = () => {
+    router.push('/voice');
+  };
+
+  const handleAppointmentClick = () => {
+    router.push('/appointments');
+  };
+
   return (
     <section className="relative py-20 px-6 overflow-hidden bg-gradient-to-br from-muted/10 via-background to-muted/5">
       {/* Subtle Background Pattern */}
@@ -37,6 +50,7 @@ function CTA() {
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button
                 size="lg"
+                onClick={handleVoiceClick}
                 className="px-6 py-3 font-semibold bg-gradient-to-r from-primary to-primary/90 hover:from-primary/95 hover:to-primary/85 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
               >
                 <MicIcon className="mr-2 h-4 w-4" />
@@ -45,6 +59,7 @@ function CTA() {
               <Button
                 size="lg"
                 variant="outline"
+                onClick={handleAppointmentClick}
                 className="px-6 py-3 font-semibold border border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 rounded-xl"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />

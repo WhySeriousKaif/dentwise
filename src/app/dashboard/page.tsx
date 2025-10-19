@@ -3,6 +3,7 @@ import MainActions from "@/components/dashboard/MainActions";
 import WelcomeSection from "@/components/dashboard/WelcomeSection";
 import Navbar from "@/components/Navbar";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import FloatingChatButton from "@/components/chat/FloatingChatButton";
 
 function DashboardPage() {
   return (
@@ -13,6 +14,7 @@ function DashboardPage() {
         <MainActions />
         <ActivityOverview />
       </div>
+      <FloatingChatButton />
     </ProtectedRoute>
   );
 }

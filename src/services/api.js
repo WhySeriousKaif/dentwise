@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// Use relative URLs for API calls (Next.js handles them)
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 // Create axios instance with default config
@@ -27,12 +28,7 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      if (typeof window !== 'undefined') {
-        window.location.href = '/signin';
-      }
-    }
+    // Don't automatically redirect on 401 - let components handle it
     return Promise.reject(error);
   }
 );

@@ -1,9 +1,21 @@
+"use client";
+
 import { Button } from "../ui/button";
 import { CalendarIcon, MicIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function Hero() {
+  const router = useRouter();
+
+  const handleVoiceClick = () => {
+    router.push('/voice');
+  };
+
+  const handleAppointmentClick = () => {
+    router.push('/appointments');
+  };
+
   return (
     <section className="relative h-screen flex items-center overflow-hidden pt-20">
       {/* GRID BG  */}
@@ -53,19 +65,24 @@ function Hero() {
 
               {/* CTA BUTTONS */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/signup">
-                  <Button size={"lg"}>
-                    <MicIcon className="mr-2 size-5" />
-                    Try voice agent
-                  </Button>
-                </Link>
+                <Button 
+                  size={"lg"} 
+                  onClick={handleVoiceClick}
+                  className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/95 hover:to-primary/85 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <MicIcon className="mr-2 size-5" />
+                  Try Voice Chat !
+                </Button>
 
-                <Link href="/signup">
-                  <Button size={"lg"} variant={"outline"}>
-                    <CalendarIcon className="mr-2 size-5" />
-                    Book appointment
-                  </Button>
-                </Link>
+                <Button 
+                  size={"lg"} 
+                  variant={"outline"} 
+                  onClick={handleAppointmentClick}
+                  className="border-2 border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
+                >
+                  <CalendarIcon className="mr-2 size-5" />
+                  Book appointment
+                </Button>
               </div>
 
               {/* USER TESTIMONIALS */}

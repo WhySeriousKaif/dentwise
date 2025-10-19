@@ -12,7 +12,7 @@ function Footer() {
                 alt="DentWise Logo"
                 width={32}
                 height={32}
-                className="w-8 h-8"
+                className="w-8 h-8 logo-blue"
               />
               <span className="font-semibold text-lg">DentWise</span>
             </div>

@@ -7,10 +7,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./ui/button";
+import ThemeToggle from "./ThemeToggle";
 
 function Navbar() {
   const dispatch = useAppDispatch();
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { user, isAuthenticated, loading, initialized } = useAppSelector((state) => state.auth);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -33,13 +34,32 @@ function Navbar() {
     }
   };
 
+  // Show loading state while checking authentication
+  if (!initialized || loading) {
+    return (
+      <nav className="fixed top-0 right-0 left-0 z-50 px-6 py-2 border-b border-border/50 bg-background/80 backdrop-blur-md h-16">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-2">
+            <Image src={"/logo.png"} alt="DentWise Logo" width={32} height={32} className="w-11 logo-blue" />
+            <span className="font-semibold text-lg">DentWise</span>
+          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <div className="w-16 h-8 bg-muted animate-pulse rounded"></div>
+            <div className="w-16 h-8 bg-muted animate-pulse rounded"></div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   // If user is not authenticated, show landing page navigation
   if (!isAuthenticated) {
     return (
       <nav className="fixed top-0 right-0 left-0 z-50 px-6 py-2 border-b border-border/50 bg-background/80 backdrop-blur-md h-16">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2">
-            <Image src={"/logo.png"} alt="DentWise Logo" width={32} height={32} className="w-11" />
+            <Image src={"/logo.png"} alt="DentWise Logo" width={32} height={32} className="w-11 logo-blue" />
             <span className="font-semibold text-lg">DentWise</span>
           </Link>
 
@@ -65,6 +85,7 @@ function Navbar() {
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Link href="/signin">
               <Button variant={"ghost"} size={"sm"}>
                 Login
@@ -86,7 +107,7 @@ function Navbar() {
         {/* LOGO */}
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.png" alt="DentWise Logo" width={32} height={32} className="w-11" />
+            <Image src="/logo.png" alt="DentWise Logo" width={32} height={32} className="w-11 logo-blue" />
           </Link>
 
           <div className="flex items-center gap-6">
@@ -155,6 +176,7 @@ function Navbar() {
               <span className="hidden md:inline">Sign Out</span>
             </Button>
           </div>
+          <ThemeToggle />
         </div>
       </div>
     </nav>
