@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useAppSelector } from "@/store/hooks";
 
 export default function WelcomeSection() {
-  const { user } = useAppSelector((state) => state.auth);
+  const authState: any = useAppSelector((state: any) => state.auth);
+  const { user } = authState || {};
 
   return (
     <div className="relative z-10 flex items-center justify-between bg-gradient-to-br from-primary/10 via-primary/5 to-background rounded-3xl p-8 border border-primary/20 mb-12 overflow-hidden">
