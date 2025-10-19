@@ -1,14 +1,22 @@
-import { getUserAppointmentStats } from "@/lib/actions/appointments";
-import { currentUser } from "@clerk/nextjs/server";
+'use client';
+
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getAppointmentStats } from "@/features/appointments/appointmentSlice";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { BrainIcon, MessageSquareIcon } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Button } from "../ui/button";
 
-async function DentalHealthOverview() {
-  const appointmentStats = await getUserAppointmentStats();
-  const user = await currentUser();
+function DentalHealthOverview() {
+  const dispatch = useAppDispatch();
+  const { stats, loading } = useAppSelector((state) => state.appointments);
+  const { user } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(getAppointmentStats());
+  }, [dispatch]);
 
   return (
     <Card className="lg:col-span-2">
@@ -23,19 +31,19 @@ async function DentalHealthOverview() {
         <div className="grid md:grid-cols-3 gap-6">
           <div className="text-center p-4 bg-muted/30 rounded-xl">
             <div className="text-2xl font-bold text-primary mb-1">
-              {appointmentStats.completedAppointments}
+              {loading ? "..." : stats.completedAppointments}
             </div>
             <div className="text-sm text-muted-foreground">Completed Visits</div>
           </div>
           <div className="text-center p-4 bg-muted/30 rounded-xl">
             <div className="text-2xl font-bold text-primary mb-1">
-              {appointmentStats.totalAppointments}
+              {loading ? "..." : stats.totalAppointments}
             </div>
             <div className="text-sm text-muted-foreground">Total Appointments</div>
           </div>
           <div className="text-center p-4 bg-muted/30 rounded-xl">
             <div className="text-2xl font-bold text-primary mb-1">
-              {format(new Date(user?.createdAt!), "MMM yyyy")}
+              {user?.createdAt ? format(new Date(user.createdAt), "MMM yyyy") : "..."}
             </div>
             <div className="text-sm text-muted-foreground">Member Since</div>
           </div>

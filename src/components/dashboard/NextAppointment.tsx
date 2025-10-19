@@ -1,11 +1,20 @@
-import { getUserAppointments } from "@/lib/actions/appointments";
+'use client';
+
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getUserAppointments } from "@/features/appointments/appointmentSlice";
 import { format, isAfter, isSameDay, parseISO } from "date-fns";
 import NoNextAppointments from "./NoNextAppointments";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { CalendarIcon, ClockIcon, UserIcon } from "lucide-react";
 
-async function NextAppointment() {
-  const appointments = await getUserAppointments();
+function NextAppointment() {
+  const dispatch = useAppDispatch();
+  const { appointments, loading } = useAppSelector((state) => state.appointments);
+
+  useEffect(() => {
+    dispatch(getUserAppointments());
+  }, [dispatch]);
 
   // filter for upcoming CONFIRMED appointments only (today or future)
   const upcomingAppointments =
@@ -18,6 +27,25 @@ async function NextAppointment() {
 
   // get the next appointment (earliest upcoming one)
   const nextAppointment = upcomingAppointments[0];
+
+  if (loading) {
+    return (
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-background">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarIcon className="size-5 text-primary" />
+            Next Appointment
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-muted rounded w-3/4"></div>
+            <div className="h-4 bg-muted rounded w-1/2"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!nextAppointment) return <NoNextAppointments />; // no appointments, return nothing
 
@@ -54,8 +82,8 @@ async function NextAppointment() {
               <UserIcon className="size-4 text-primary" />
             </div>
             <div>
-              <p className="font-medium text-sm">{nextAppointment.doctorName}</p>
-              <p className="text-xs text-muted-foreground">{nextAppointment.reason}</p>
+              <p className="font-medium text-sm">{nextAppointment.doctor?.name || 'Dr. Smith'}</p>
+              <p className="text-xs text-muted-foreground">{nextAppointment.reason || 'General Checkup'}</p>
             </div>
           </div>
 

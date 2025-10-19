@@ -4,6 +4,15 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
+    // Check if Resend API key is configured
+    if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === "dummy-key") {
+      console.warn("Resend API key not configured - skipping email sending");
+      return NextResponse.json(
+        { message: "Email service not configured", skipped: true },
+        { status: 200 }
+      );
+    }
+
     const body = await request.json();
 
     const {

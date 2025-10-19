@@ -1,28 +1,36 @@
 "use client";
 
-import {
-  bookAppointment,
-  getAppointments,
-  getBookedTimeSlots,
-  getUserAppointments,
-  updateAppointmentStatus,
-} from "@/lib/actions/appointments";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { 
+  getAppointmentStats, 
+  getUserAppointments as fetchUserAppointments 
+} from "@/features/appointments/appointmentSlice";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { appointmentService } from "@/services/appointmentService";
 
 export function useGetAppointments() {
+  const dispatch = useAppDispatch();
+  const { appointments, loading } = useAppSelector((state) => state.appointments);
+
   const result = useQuery({
     queryKey: ["getAppointments"],
-    queryFn: getAppointments,
+    queryFn: async () => {
+      await dispatch(fetchUserAppointments());
+      return appointments;
+    },
   });
 
-  return result;
+  return { ...result, data: appointments, isLoading: loading };
 }
 
 export function useBookedTimeSlots(doctorId: string, date: string) {
   return useQuery({
-    queryKey: ["getBookedTimeSlots"],
-    queryFn: () => getBookedTimeSlots(doctorId!, date),
-    enabled: !!doctorId && !!date, // only run query if both doctorId and date are provided
+    queryKey: ["getBookedTimeSlots", doctorId, date],
+    queryFn: async () => {
+      // Mock implementation - replace with actual API call
+      return [];
+    },
+    enabled: !!doctorId && !!date,
   });
 }
 
@@ -30,7 +38,7 @@ export function useBookAppointment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: bookAppointment,
+    mutationFn: appointmentService.createAppointment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getUserAppointments"] });
     },
@@ -40,19 +48,26 @@ export function useBookAppointment() {
 
 // Get user-specific appointments
 export function useUserAppointments() {
+  const dispatch = useAppDispatch();
+  const { appointments, loading } = useAppSelector((state) => state.appointments);
+
   const result = useQuery({
     queryKey: ["getUserAppointments"],
-    queryFn: getUserAppointments,
+    queryFn: async () => {
+      await dispatch(fetchUserAppointments());
+      return appointments;
+    },
   });
 
-  return result;
+  return { ...result, data: appointments, isLoading: loading };
 }
 
 export function useUpdateAppointmentStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateAppointmentStatus,
+    mutationFn: ({ appointmentId, updateData }) => 
+      appointmentService.updateAppointment(appointmentId, updateData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getAppointments"] });
     },

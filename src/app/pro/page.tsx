@@ -1,23 +1,18 @@
 import Navbar from "@/components/Navbar";
-import { PricingTable } from "@clerk/nextjs";
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { CrownIcon } from "lucide-react";
-import { redirect } from "next/navigation";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
-async function ProPage() {
-  const user = await currentUser();
-
-  if (!user) redirect("/");
+function ProPage() {
 
   return (
-    <>
+    <ProtectedRoute>
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-8 pt-24">
         <div className="mb-12 overflow-hidden">
           <div className="flex items-center justify-between bg-gradient-to-br from-primary/10 to-background rounded-3xl p-8 border border-primary/20">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primar/10 rounded-full border border-primary/20 ">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
                 <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium text-primary">Upgrade to Pro</span>
               </div>
@@ -49,10 +44,12 @@ async function ProPage() {
             </p>
           </div>
 
-          <PricingTable />
+          <div className="text-center p-8 bg-muted/30 rounded-xl">
+            <p className="text-muted-foreground">Pricing integration coming soon...</p>
+          </div>
         </div>
       </div>
-    </>
+    </ProtectedRoute>
   );
 }
 

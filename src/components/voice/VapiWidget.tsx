@@ -1,7 +1,7 @@
 "use client";
 
 import { vapi } from "@/lib/vapi";
-import { useUser } from "@clerk/nextjs";
+import { useAppSelector } from "@/store/hooks";
 import { useEffect, useRef, useState } from "react";
 import { Card } from "../ui/card";
 import Image from "next/image";
@@ -11,11 +11,11 @@ function VapiWidget() {
   const [callActive, setCallActive] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState([]);
   const [callEnded, setCallEnded] = useState(false);
 
-  const { user, isLoaded } = useUser();
-  const messageContainerRef = useRef<HTMLDivElement>(null);
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const messageContainerRef = useRef(null);
 
   // auto-scroll for messages
   useEffect(() => {
@@ -51,14 +51,14 @@ function VapiWidget() {
       setIsSpeaking(false);
     };
 
-    const handleMessage = (message: any) => {
+    const handleMessage = (message) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
         const newMessage = { content: message.transcript, role: message.role };
         setMessages((prev) => [...prev, newMessage]);
       }
     };
 
-    const handleError = (error: any) => {
+    const handleError = (error) => {
       console.log("Vapi Error", error);
       setConnecting(false);
       setCallActive(false);
@@ -92,15 +92,22 @@ function VapiWidget() {
         setMessages([]);
         setCallEnded(false);
 
+        // Check if Vapi is properly configured
+        if (!process.env.NEXT_PUBLIC_VAPI_API_KEY || !process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID) {
+          throw new Error("Vapi configuration missing. Please set NEXT_PUBLIC_VAPI_API_KEY and NEXT_PUBLIC_VAPI_ASSISTANT_ID in your environment variables.");
+        }
+
         await vapi.start(process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID);
       } catch (error) {
         console.log("Failed to start call", error);
         setConnecting(false);
+        // Show user-friendly error message
+        alert("Voice assistant is not configured. Please contact support to enable this feature.");
       }
     }
   };
 
-  if (!isLoaded) return null;
+  if (!isAuthenticated) return null;
 
   return (
     <div className="max-w-5xl mx-auto px-4 flex flex-col overflow-hidden pb-20">
@@ -198,18 +205,16 @@ function VapiWidget() {
           <div className="aspect-video flex flex-col items-center justify-center p-6 relative">
             {/* User Image */}
             <div className="relative size-32 mb-4">
-              <Image
-                src={user?.imageUrl!}
-                alt="User"
-                width={128}
-                height={128}
-                className="size-full object-cover rounded-full"
-              />
+              <div className="size-full bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
+                <span className="text-2xl font-bold text-primary">
+                  {user?.name?.charAt(0) || "U"}
+                </span>
+              </div>
             </div>
 
             <h2 className="text-xl font-bold text-foreground">You</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              {user ? (user.firstName + " " + (user.lastName || "")).trim() : "Guest"}
+              {user?.name || "Guest"}
             </p>
 
             {/* User Ready Text */}

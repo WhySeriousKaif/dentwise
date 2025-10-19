@@ -1,28 +1,26 @@
 "use client";
 
 import AdminStats from "@/components/admin/AdminStats";
-import DoctorsManagement from "@/components/admin/DoctorsManagement";
 import RecentAppointments from "@/components/admin/RecentAppointments";
 import Navbar from "@/components/Navbar";
 import { useGetAppointments } from "@/hooks/use-appointment";
-import { useGetDoctors } from "@/hooks/use-doctors";
-import { useUser } from "@clerk/nextjs";
+import { useAppSelector } from "@/store/hooks";
 import { SettingsIcon } from "lucide-react";
 
 function AdminDashboardClient() {
-  const { user } = useUser();
-  const { data: doctors = [], isLoading: doctorsLoading } = useGetDoctors();
+  const { user } = useAppSelector((state) => state.auth);
+  // const { data: doctors = [], isLoading: doctorsLoading } = useGetDoctors();
   const { data: appointments = [], isLoading: appointmentsLoading } = useGetAppointments();
 
   // calculate stats from real data
   const stats = {
-    totalDoctors: doctors.length,
-    activeDoctors: doctors.filter((doc) => doc.isActive).length,
+    totalDoctors: 0, // Placeholder - can be implemented later
+    activeDoctors: 0, // Placeholder - can be implemented later
     totalAppointments: appointments.length,
     completedAppointments: appointments.filter((app) => app.status === "COMPLETED").length,
   };
 
-  if (doctorsLoading || appointmentsLoading) return <LoadingUI />;
+  if (appointmentsLoading) return <LoadingUI />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,7 +36,7 @@ function AdminDashboardClient() {
             </div>
             <div>
               <h1 className="text-4xl font-bold mb-2">
-                Welcome back, {user?.firstName || "Admin"}!
+                Welcome back, {user?.name || "Admin"}!
               </h1>
               <p className="text-muted-foreground">
                 Manage doctors, oversee appointments, and monitor your dental practice performance.
@@ -60,7 +58,7 @@ function AdminDashboardClient() {
           completedAppointments={stats.completedAppointments}
         />
 
-        <DoctorsManagement />
+        {/* DoctorsManagement component removed - can be implemented later */}
 
         <RecentAppointments />
       </div>

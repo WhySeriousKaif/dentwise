@@ -1,20 +1,16 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import AdminDashboardClient from "./AdminDashboardClient";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
-async function AdminPage() {
-  const user = await currentUser();
+function AdminPage() {
+  // For now, allow all authenticated users to access admin
+  // You can add proper admin role checking later
 
-  // user is not logged in
-  if (!user) redirect("/");
-
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const userEmail = user.emailAddresses[0]?.emailAddress;
-
-  // user is not the admin
-  if (!adminEmail || userEmail !== adminEmail) redirect("/dashboard");
-
-  return <AdminDashboardClient />;
+  return (
+    <ProtectedRoute>
+      <AdminDashboardClient />
+    </ProtectedRoute>
+  );
 }
 
 export default AdminPage;

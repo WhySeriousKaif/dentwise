@@ -1,7 +1,7 @@
-import { SignUpButton } from "@clerk/nextjs";
 import { ArrowRightIcon, ZapIcon } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 function HowItWorks() {
   return (
@@ -132,12 +132,12 @@ function HowItWorks() {
 
       {/* BOTTOM CTA */}
       <div className="text-center mt-16">
-        <SignUpButton mode="modal">
+        <Link href="/signup">
           <Button size="lg">
             <ArrowRightIcon className="mr-2 size-5" />
             Get started now
           </Button>
-        </SignUpButton>
+        </Link>
       </div>
     </section>
   );
