@@ -18,7 +18,7 @@ function AdminDashboardClient() {
     totalDoctors: 0, // Placeholder - can be implemented later
     activeDoctors: 0, // Placeholder - can be implemented later
     totalAppointments: appointments.length,
-    completedAppointments: appointments.filter((app) => app.status === "COMPLETED").length,
+    completedAppointments: appointments.filter((app: any) => app.status === "COMPLETED").length,
   };
 
   if (appointmentsLoading) return <LoadingUI />;
