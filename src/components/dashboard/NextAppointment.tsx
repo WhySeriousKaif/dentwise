@@ -13,21 +13,22 @@ import { toast } from "sonner";
 
 function NextAppointment() {
   const dispatch = useAppDispatch();
-  const { appointments, loading } = useAppSelector((state) => state.appointments);
+  const appointmentsState: any = useAppSelector((state: any) => state.appointments);
+  const { appointments, loading } = appointmentsState || {};
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const cancelAppointmentMutation = useCancelAppointment();
 
   useEffect(() => {
-    dispatch(getUserAppointments());
+    (dispatch as any)(getUserAppointments());
   }, [dispatch]);
 
-  const handleAppointmentClick = (appointment) => {
+  const handleAppointmentClick = (appointment: any) => {
     setSelectedAppointment(appointment);
     setShowDetailsModal(true);
   };
 
-  const handleDeleteAppointment = async (appointmentId) => {
+  const handleDeleteAppointment = async (appointmentId: string) => {
     try {
       await cancelAppointmentMutation.mutateAsync(appointmentId);
       toast.success('Appointment cancelled successfully');
