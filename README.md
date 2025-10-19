@@ -1,5 +1,7 @@
 <h1 align="center">🦷 Dentwise – Dental Platform with AI Voice Agent 🦷</h1>
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-https://nextjs-250vn.sevalla.app/-blue?style=for-the-badge)](https://nextjs-250vn.sevalla.app/)
+
 ![Demo App](/public/screenshot-for-readme.png)
 
 Highlights:
@@ -43,7 +45,11 @@ NEXT_PUBLIC_APP_URL=your_app_url
 
 ```
 
-## Run the app
+## 🌐 Live Demo
+
+**Visit the live application:** [https://nextjs-250vn.sevalla.app/](https://nextjs-250vn.sevalla.app/)
+
+## Run the app locally
 
 ```bash
 1- npm install
