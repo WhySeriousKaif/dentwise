@@ -66,8 +66,8 @@ export function useUpdateAppointmentStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ appointmentId, updateData }) => 
-      appointmentService.updateAppointment(appointmentId, updateData),
+    mutationFn: (args: { appointmentId: string; updateData: any }) =>
+      appointmentService.updateAppointment(args.appointmentId, args.updateData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getAppointments"] });
     },
