@@ -1,6 +1,6 @@
 <h1 align="center">🦷 Dentwise – Dental Platform with AI Voice Agent 🦷</h1>
 
-(https://nextjs-250vn.sevalla.app/)
+Live Demo - https://nextjs-250vn.sevalla.app/
 
 ![Demo App](/public/screenshot-for-readme.png)
 
