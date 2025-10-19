@@ -11,7 +11,8 @@ import ThemeToggle from "../ThemeToggle";
 
 function Header() {
   const dispatch = useAppDispatch();
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const authState: any = useAppSelector((state: any) => state.auth);
+  const { user, isAuthenticated } = authState || {};
   const router = useRouter();
 
   const scrollToSection = (sectionId: string) => {
@@ -26,7 +27,7 @@ function Header() {
 
   const handleSignOut = async () => {
     try {
-      await dispatch(signOut());
+      await (dispatch as any)(signOut());
       router.push('/');
     } catch (error) {
       console.error('Sign out error:', error);
