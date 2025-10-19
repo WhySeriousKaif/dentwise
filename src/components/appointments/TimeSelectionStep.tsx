@@ -27,7 +27,7 @@ function TimeSelectionStep({
   selectedTime,
   selectedType,
 }: TimeSelectionStepProps) {
-  const { data: bookedTimeSlots = [] } = useBookedTimeSlots(selectedDentistId, selectedDate);
+  const { data: bookedTimeSlots = [] as string[] } = useBookedTimeSlots(selectedDentistId, selectedDate);
 
   const availableDates = getNext5Days();
   const availableTimeSlots = getAvailableTimeSlots();
@@ -108,7 +108,7 @@ function TimeSelectionStep({
             <div className="space-y-3">
               <h4 className="font-medium">Available Times</h4>
               <div className="grid grid-cols-3 gap-2">
-                {availableTimeSlots.map((time) => {
+                {availableTimeSlots.map((time: string) => {
                   const isBooked = bookedTimeSlots.includes(time);
                   return (
                     <Button
