@@ -14,7 +14,7 @@ function RecentAppointments() {
 
     const newStatus = appointment?.status === "CONFIRMED" ? "COMPLETED" : "CONFIRMED";
 
-    updateAppointmentMutation.mutate({ id: appointmentId, status: newStatus });
+    updateAppointmentMutation.mutate({ appointmentId, updateData: { status: newStatus } });
   };
 
   const getStatusBadge = (status: string) => {
@@ -53,7 +53,7 @@ function RecentAppointments() {
             </TableHeader>
 
             <TableBody>
-            {appointments.map((appointment: any) => (
+              {appointments.map((appointment: any) => (
                 <TableRow key={appointment.id}>
                   <TableCell>
                     <div>
