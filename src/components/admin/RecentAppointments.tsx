@@ -10,7 +10,7 @@ function RecentAppointments() {
   const updateAppointmentMutation = useUpdateAppointmentStatus();
 
   const handleToggleAppointmentStatus = (appointmentId: string) => {
-    const appointment = appointments.find((apt) => apt.id === appointmentId);
+    const appointment = appointments.find((apt: any) => apt.id === appointmentId);
 
     const newStatus = appointment?.status === "CONFIRMED" ? "COMPLETED" : "CONFIRMED";
 
@@ -53,7 +53,7 @@ function RecentAppointments() {
             </TableHeader>
 
             <TableBody>
-              {appointments.map((appointment) => (
+            {appointments.map((appointment: any) => (
                 <TableRow key={appointment.id}>
                   <TableCell>
                     <div>
