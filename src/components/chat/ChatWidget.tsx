@@ -80,9 +80,10 @@ export default function ChatWidget() {
       };
 
       setMessages((prevMessages) => [...prevMessages, aiResponse]);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error sending message to AI:', error);
-      setError(error.message || 'Failed to get AI response. Please try again.');
+      const message = error instanceof Error ? error.message : 'Failed to get AI response. Please try again.';
+      setError(message);
       
       // Add error message to chat
       const errorMessage: Message = {
