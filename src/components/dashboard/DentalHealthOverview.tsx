@@ -11,11 +11,13 @@ import { Button } from "../ui/button";
 
 function DentalHealthOverview() {
   const dispatch = useAppDispatch();
-  const { stats, loading } = useAppSelector((state) => state.appointments);
-  const { user } = useAppSelector((state) => state.auth);
+  const appointmentsState: any = useAppSelector((state: any) => state.appointments);
+  const { stats, loading } = appointmentsState || {};
+  const authState: any = useAppSelector((state: any) => state.auth);
+  const { user } = authState || {};
 
   useEffect(() => {
-    dispatch(getAppointmentStats());
+    (dispatch as any)(getAppointmentStats());
   }, [dispatch]);
 
   return (
