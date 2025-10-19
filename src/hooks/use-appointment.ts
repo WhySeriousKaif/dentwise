@@ -16,7 +16,7 @@ export function useGetAppointments() {
   const result = useQuery({
     queryKey: ["getAppointments"],
     queryFn: async () => {
-      await dispatch(fetchUserAppointments());
+      await dispatch(fetchUserAppointments() as any);
       return appointments;
     },
   });
@@ -56,7 +56,7 @@ export function useUserAppointments() {
   const result = useQuery({
     queryKey: ["getUserAppointments"],
     queryFn: async () => {
-      await dispatch(fetchUserAppointments());
+      await dispatch(fetchUserAppointments() as any);
       return appointments;
     },
   });
