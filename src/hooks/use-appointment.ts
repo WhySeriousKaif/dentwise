@@ -10,7 +10,8 @@ import { appointmentService } from "@/services/appointmentService";
 
 export function useGetAppointments() {
   const dispatch = useAppDispatch();
-  const { appointments, loading } = useAppSelector((state: any) => state.appointments);
+  const appointmentsState: any = useAppSelector((state: any) => state.appointments);
+  const { appointments, loading } = appointmentsState || {};
 
   const result = useQuery({
     queryKey: ["getAppointments"],
@@ -49,7 +50,8 @@ export function useBookAppointment() {
 // Get user-specific appointments
 export function useUserAppointments() {
   const dispatch = useAppDispatch();
-  const { appointments, loading } = useAppSelector((state: any) => state.appointments);
+  const appointmentsState: any = useAppSelector((state: any) => state.appointments);
+  const { appointments, loading } = appointmentsState || {};
 
   const result = useQuery({
     queryKey: ["getUserAppointments"],
