@@ -14,7 +14,8 @@ function VapiWidget() {
   const [messages, setMessages] = useState([]);
   const [callEnded, setCallEnded] = useState(false);
 
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const authState: any = useAppSelector((state: any) => state.auth);
+  const { user, isAuthenticated } = authState || {};
   const messageContainerRef = useRef(null);
 
   // auto-scroll for messages
