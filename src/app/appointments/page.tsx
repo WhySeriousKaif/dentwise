@@ -82,13 +82,13 @@ function AppointmentsPage() {
     const appointmentType = APPOINTMENT_TYPES.find((t) => t.id === selectedType);
     
     // Mock doctor data - in a real app, this would come from the doctor selection
-    const doctorData = {
+    const doctorData: Record<string, { name: string; imageUrl: string }> = {
       "1": { name: "Dr. Sarah Johnson", imageUrl: "/doctors/dr-sarah-johnson.jpg" },
       "2": { name: "Dr. Michael Chen", imageUrl: "/doctors/dr-michael-chen.jpg" },
       "3": { name: "Dr. Emily Davis", imageUrl: "/doctors/dr-emily-davis.jpg" }
     };
     
-    const selectedDoctor = doctorData[selectedDentistId] || { name: "Dr. Smith", imageUrl: "/default-doctor.jpg" };
+    const selectedDoctor = doctorData[String(selectedDentistId)] || { name: "Dr. Smith", imageUrl: "/default-doctor.jpg" };
 
     bookAppointmentMutation.mutate(
       {
@@ -215,7 +215,7 @@ function AppointmentsPage() {
         <div className="mb-8 max-w-7xl mx-auto px-6 py-8">
           <h2 className="text-xl font-semibold mb-4">Your Upcoming Appointments</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {userAppointments.map((appointment, index) => (
+            {userAppointments.map((appointment: any, index: number) => (
               <div 
                 key={appointment._id || appointment.id || `appointment-${index}`} 
                 className="bg-card border rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
